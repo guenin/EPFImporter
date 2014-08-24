@@ -129,6 +129,7 @@ class Ingester(object):
             self._populateTable(self.tmpTableName, skipKeyViolators=skipKeyViolators)
             self._renameAndDrop(self.tmpTableName, self.tableName)
         except MySQLdb.Error, e:
+            LOGGER.error("MySQL error %d: %s", e.args[0], e.args[1])
             LOGGER.exception("Fatal error encountered while ingesting '%s'", self.filePath)
             LOGGER.error("Last record ingested before failure: %d", self.lastRecordIngested)
             self.abortTime = datetime.datetime.now()
@@ -152,7 +153,7 @@ class Ingester(object):
             self._populateTable(self.tmpTableName, resumeNum=fromRecord, skipKeyViolators=skipKeyViolators)
             self._renameAndDrop(self.tmpTableName, self.tableName)
         except MySQLdb.Error, e:
-            #LOGGER.error("Error %d: %s", e.args[0], e.args[1])
+            LOGGER.error("MySQL error %d: %s", e.args[0], e.args[1])
             LOGGER.error("Error encountered while ingesting '%s'", self.filePath)
             LOGGER.error("Last record ingested before failure: %d", self.lastRecordIngested)
             raise #re-raise the exception
@@ -214,7 +215,7 @@ class Ingester(object):
                     self._renameAndDrop(self.unionTableName, self.tableName)
 
             except MySQLdb.Error, e:
-                #LOGGER.error("Error %d: %s", e.args[0], e.args[1])
+                LOGGER.error("MySQL error %d: %s", e.args[0], e.args[1])
                 LOGGER.error("Fatal error encountered while ingesting '%s'", self.filePath)
                 LOGGER.error("Last record ingested before failure: %d", self.lastRecordIngested)
                 self.abortTime = datetime.datetime.now()
