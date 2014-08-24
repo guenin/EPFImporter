@@ -237,7 +237,8 @@ class Ingester(object):
         host=self.dbHost,
         user=self.dbUser,
         passwd=self.dbPassword,
-        db=self.dbName)
+        db=self.dbName,
+        autocommit=True)
         return conn
 
 
