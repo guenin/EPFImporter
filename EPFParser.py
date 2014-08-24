@@ -86,11 +86,20 @@ class Parser(object):
         self.recordDelim = recordDelim
         self.fieldDelim = fieldDelim
 
-
-        #Seek to the end and parse the recordsWritten line
-        self.eFile.seek(-40, os.SEEK_END)
-        str = self.eFile.read() #reads from -40 to end of file
         self.eFile = codecs.open(filePath, mode="r", encoding="utf-8") #this will throw an exception if filePath does not exist
+
+        #Unicode characters can be up to 6 bytes; step backwards until we don't split across one...
+        byteRange = range(-40, -46, -1)
+        for pos in byteRange:
+          try:
+            self.eFile.seek(pos, os.SEEK_END) #seek to the end
+            str = self.eFile.read() #reads from pos to end of file
+          except UnicodeDecodeError, e:
+            if pos == byteRange[-1]: raise #reraise error if last byte is still bad
+          else:
+            break #found a good byte, stop looking!
+
+        #Parse the recordsWritten line
         lst = str.split(self.commentChar + Parser.recordCountTag)
         numStr = lst.pop().rpartition(self.recordDelim)[0]
         self.recordsExpected = int(numStr)
