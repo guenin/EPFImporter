@@ -233,7 +233,7 @@ class Ingester(object):
         Establish a connection to the database, returning the connection object.
         """
         conn = MySQLdb.connect(
-        charset='utf8',
+        charset='utf8mb4',
         host=self.dbHost,
         user=self.dbUser,
         passwd=self.dbPassword,
