@@ -304,7 +304,7 @@ class Ingester(object):
         lst = [" ".join(aPair) for aPair in colPairs] #list comprehension
         paramStr = ",".join(lst)
         #paramString now looks like "export_date BIGINT, storefront_id INT, country_code VARCHAR(100)" etc.
-        exStr = """CREATE TABLE %s (%s)""" % (tableName, paramStr)
+        exStr = """CREATE TABLE %s (%s) ROW_FORMAT=COMPRESSED""" % (tableName, paramStr)
         cur.execute(exStr) #create the table in the database
         #set the primary key
         conn.close()
@@ -448,7 +448,7 @@ class Ingester(object):
         conn = self.connect()
         cur = conn.cursor()
         cur.execute("""DROP TABLE IF EXISTS %s""" % self.unionTableName)
-        exStr = """CREATE TABLE %s %s""" % (self.unionTableName, self._incrementalUnionString())
+        exStr = """CREATE TABLE %s ROW_FORMAT=COMPRESSED %s""" % (self.unionTableName, self._incrementalUnionString())
         cur.execute(exStr)
         conn.close()
 
