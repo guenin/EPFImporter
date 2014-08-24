@@ -38,6 +38,7 @@
 import os
 import re
 import logging
+import codecs
 
 LOGGER = logging.getLogger()
 
@@ -85,11 +86,11 @@ class Parser(object):
         self.recordDelim = recordDelim
         self.fieldDelim = fieldDelim
 
-        self.eFile = open(filePath, mode="rU") #this will throw an exception if filePath does not exist
 
         #Seek to the end and parse the recordsWritten line
         self.eFile.seek(-40, os.SEEK_END)
         str = self.eFile.read() #reads from -40 to end of file
+        self.eFile = codecs.open(filePath, mode="r", encoding="utf-8") #this will throw an exception if filePath does not exist
         lst = str.split(self.commentChar + Parser.recordCountTag)
         numStr = lst.pop().rpartition(self.recordDelim)[0]
         self.recordsExpected = int(numStr)
@@ -185,7 +186,6 @@ class Parser(object):
             ln = self.eFile.readline()
             if (not ln): #end of file
                 break
-            ln = unicode(ln, 'utf-8')
             if (isFirstLine and ignoreComments and ln.find(self.commentChar) == 0): #comment
                 continue
             lst.append(ln)
